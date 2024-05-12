@@ -1,0 +1,31 @@
+// QUERY 1 - for each plane model,print some stats as it's avg speed, avg liters consumed etc.
+MATCH (f:Flight)-[u:USES_EQUIPMENT]->(e:Equipment)
+WHERE f.lt_combustivel <> 0 and f.nr_horas_voadas <> 0 and f.kg_payload <> 0 and f.nr_velocidade_media <> 0 and f.km_distancia <> 0
+RETURN e.ds_modelo as airplane_model,
+    count(*) as flight_count,
+    AVG(f.nr_velocidade_media) AS avg_speed,
+    AVG(f.lt_combustivel) as avg_liters,
+    AVG(f.nr_horas_voadas) as avg_hours_per_flight,
+    AVG(f.km_distancia)as avg_distance_in_km,
+    AVG(f.kg_payload) as avg_payload_in_kg
+ORDER BY flight_count DESC
+
+
+
+// QUERY 2 - list companies and their total distance traveled + total hours of flight
+MATCH (f:Flight)-[d:OPERATED_BY]->(c:Company)
+RETURN c.nm_empresa,
+    SUM(f.km_distancia) AS total_distance, 
+    SUM(f.nr_horas_voadas) as total_hours
+ORDER BY total_distance DESC 
+
+
+
+// QUERY 3 - find all the routes in the database. also, count how many times they have been done.
+MATCH (a_origem:Airport)<-[d:DEPARTS_FROM]-(f: Flight)-[a:ARRIVES_AT]->(a_destino:Airport)
+RETURN a_origem.nm_aerodromo AS origin_airport,
+    a_origem.sg_iata as IATA_origin,
+    a_destino.nm_aerodromo AS destination_airport,
+    a_destino.sg_iata as IATA_destination,
+    COUNT(*) AS route_count
+ORDER BY route_count DESC

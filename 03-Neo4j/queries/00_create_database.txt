@@ -1,0 +1,86 @@
+// Create airports
+LOAD CSV WITH HEADERS FROM 'file:///airports.csv' AS row
+FIELDTERMINATOR ';'
+CREATE (:Airport {
+    id_aerodromo: toInteger(row.id_aerodromo),
+    sg_icao: row.sg_icao,
+    sg_iata: row.sg_iata,
+    nm_aerodromo: row.nm_aerodromo,
+    nm_municipio: row.nm_municipio,
+    nm_pais: row.nm_pais,
+    nm_continente: row.nm_continente
+});
+
+
+
+
+// Create lines
+LOAD CSV WITH HEADERS FROM 'file:///line.csv' AS row
+FIELDTERMINATOR ';'
+CREATE (:Line {
+    id_tipo_linha: toInteger(row.id_tipo_linha),
+    cd_tipo_linha: row.cd_tipo_linha,
+    ds_tipo_linha: row.ds_tipo_linha,
+    ds_natureza_tipo_linha: row.ds_natureza_tipo_linha,
+    ds_servico_tipo_linha: row.ds_servico_tipo_linha
+});
+
+
+
+
+// Create equipment
+LOAD CSV WITH HEADERS FROM 'file:///equipment.csv' AS row
+FIELDTERMINATOR ';'
+CREATE (:Equipment {
+    id_equipamento: toInteger(row.id_equipamento),
+    sg_equipamento_icao: row.sg_equipamento_icao,
+    ds_modelo: row.ds_modelo
+});
+
+
+
+
+// Create companies
+LOAD CSV WITH HEADERS FROM 'file:///company.csv' AS row
+FIELDTERMINATOR ';'
+CREATE (:Company {
+    id_empresa: toInteger(row.id_empresa),
+    sg_empresa_icao: row.sg_empresa_icao,
+    sg_empresa_iata: row.sg_empresa_iata,
+    nm_empresa: row.nm_empresa,
+    ds_tipo_empresa: row.ds_tipo_empresa
+});
+
+
+
+
+// finally, create the fligths
+LOAD CSV WITH HEADERS FROM 'file:///flights.csv' AS row
+FIELDTERMINATOR ';'
+WITH row
+MATCH (c:Company {id_empresa: toInteger(row.id_empresa)})
+MATCH (l:Line {id_tipo_linha: toInteger(row.id_tipo_linha)})
+MATCH (a_origem:Airport {id_aerodromo: toInteger(row.id_aerodromo_origem)})
+MATCH (a_destino:Airport {id_aerodromo: toInteger(row.id_aerodromo_destino)})
+MATCH (e:Equipment {id_equipamento: toInteger(row.id_equipamento)})
+MERGE (f:Flight {id_basica: toInteger(row.id_basica)})
+MERGE (f)-[:OPERATED_BY]->(c)
+MERGE (f)-[:HAS_LINE]->(l)
+MERGE (f)-[:DEPARTS_FROM]->(a_origem)
+MERGE (f)-[:ARRIVES_AT]->(a_destino)
+MERGE (f)-[:USES_EQUIPMENT]->(e)
+ON CREATE SET f += {
+    hr_partida_real: row.hr_partida_real,
+    dt_partida_real: datetime(row.dt_partida_real),
+    nr_semana_partida_real: toInteger(row.nr_semana_partida_real),
+    hr_chegada_real: row.hr_chegada_real,
+    dt_chegada_real: datetime(row.dt_chegada_real),
+    nr_semana_chegada_real: toInteger(row.nr_semana_chegada_real),
+    ds_matricula: row.ds_matricula,
+    lt_combustivel: toInteger(row.lt_combustivel),
+    nr_assentos_ofertados: toInteger(row.nr_assentos_ofertados),
+    kg_payload: toInteger(row.kg_payload),
+    km_distancia: toInteger(row.km_distancia),
+    nr_horas_voadas: toFloat(row.nr_horas_voadas),
+    nr_velocidade_media: toFloat(row.nr_velocidade_media)
+ };
