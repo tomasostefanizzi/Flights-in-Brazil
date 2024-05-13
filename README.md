@@ -67,10 +67,8 @@ A detailed explanation of each variable and its meaning in the dataset is provid
 | Attribute         | Data Type   | Description                                                                                      |
 |-------------------|-------------|--------------------------------------------------------------------------------------------------|
 | id_empresa        | Integer     | Unique identifier for a company.                                                                 |
-| sg_empresa_icao   | Varchar(3)  | ICAO acronym of the airline. Refers to the designator of the air transport company obtained from |
-|                   |             | the ICAO (International Civil Aviation Organization).                                           |
-| sg_empresa_iata   | Varchar(2)  | IATA acronym for the airline. Refers to the air transport company designator obtained from IATA |
-|                   |             | (International Air Transport Association).                                                      |
+| sg_empresa_icao   | Varchar(3)  | ICAO acronym of the airline. Refers to the designator of the air transport company obtained from the ICAO (International Civil Aviation Organization).|
+| sg_empresa_iata   | Varchar(2)  | IATA acronym for the airline. Refers to the air transport company designator obtained from IATA (International Air Transport Association).|                                                
 | nm_empresa        | Varchar(100)| Airline name.                                                                                    |
 | ds_tipo_empresa   | Text        | Description of the type of company. Refers to the description of the type of company in relation to the serviceperformed.                                                             
 
